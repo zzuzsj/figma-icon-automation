@@ -1,92 +1,123 @@
-import * as React from 'react'
-import * as ReactDOM from 'react-dom'
-import Settings from './components/Settings'
-import Updator from './components/Updator'
-import '../assets/ds.css'
-import './style.css'
+import * as React from "react";
+import * as ReactDOM from "react-dom";
+import Updator from "./components/Updator";
+import Manage from "./components/Manage";
+import "../assets/ds.css";
+import "./style.css";
 
-declare function require(path: string): any
-
+declare function require(path: string): any;
 class App extends React.Component {
   state = {
     updatorVisible: false,
-    githubData: null,
+    gitDataList: [],
     webhookData: null,
     settingSwitch: false,
-    isDone: false
-  }
+    isDone: false,
+    currentUser: null,
+    docPageList: [],
+  };
   onSucceed = () => {
-    this.setState({ isDone: true })
-  }
-  toggleView = (githubData?) => {
-    const { updatorVisible } = this.state
-    this.setState({updatorVisible: !updatorVisible})
-    if (githubData===true) {
-      const { settingSwitch } = this.state
-      this.setState({settingSwitch: !settingSwitch})
-    } else if (githubData) {
+    this.setState({ isDone: true });
+  };
+  toggleView = (gitDataList?) => {
+    const { updatorVisible } = this.state;
+    this.setState({ updatorVisible: !updatorVisible });
+    if (gitDataList === true) {
+      const { settingSwitch } = this.state;
+      this.setState({ settingSwitch: !settingSwitch });
+    } else if (gitDataList) {
       this.setState({
-        githubData: githubData
-      })
+        gitDataList: gitDataList,
+      });
     }
-  }
-  componentDidMount () {
+  };
+  componentDidMount() {
     // receive messages here
     window.onmessage = async (event) => {
-      const msg = event.data.pluginMessage
+      const msg = event.data.pluginMessage;
       switch (msg.type) {
-        case 'githubDataGot':
-          if (msg.githubData) {
+        case "gitDataGot":
+          if (msg.list) {
             this.setState({
-              updatorVisible: true,
-              githubData: msg.githubData
-            })
+              // updatorVisible: true,
+              gitDataList: msg.list,
+            });
           }
-          break
-        case 'webhookDataGot':
+          break;
+        case "currentUserGot":
+          if (msg.user) {
+            this.setState({
+              currentUser: msg.user,
+            });
+          }
+          break;
+        case "webhookDataGot":
           if (msg.webhookData) {
             this.setState({
-              webhookData: msg.webhookData
-            })
+              webhookData: msg.webhookData,
+            });
           }
-          break
+          break;
+        case "docPageListGot":
+          if (msg.docPageList) {
+            this.setState({
+              docPageList: msg.docPageList,
+            });
+          }
+          break;
       }
-    }
+    };
   }
   render() {
-    const { updatorVisible, githubData, webhookData, settingSwitch, isDone } = this.state
-    const tabVisible = githubData&&!isDone
+    const {
+      updatorVisible,
+      gitDataList,
+      webhookData,
+      settingSwitch,
+      isDone,
+      currentUser,
+      docPageList,
+    } = this.state;
+    const tabVisible = gitDataList && !isDone;
     return (
-      <div className={'container '+ (!tabVisible ? '' : 'container-with-tab')}>
-        <div className={'bar-adjust '+ (tabVisible ? '' : 'hide')}>
+      <div className={"container " + (!tabVisible ? "" : "container-with-tab")}>
+        <div className={"bar-adjust " + (tabVisible ? "" : "hide")}>
           <div
-            className={'adjust-item type type--pos-medium-bold '+(updatorVisible ? '' : 'active')}
-            onClick={e => this.toggleView()}
+            className={
+              "adjust-item type type--pos-medium-bold " +
+              (updatorVisible ? "" : "active")
+            }
+            onClick={(e) => this.toggleView()}
           >
-            Setting
+            Manage
           </div>
           <div
-            className={'adjust-item type type--pos-medium-bold '+(updatorVisible ? 'active' : '')}
-            onClick={e => this.toggleView(true)}
+            className={
+              "adjust-item type type--pos-medium-bold " +
+              (updatorVisible ? "active" : "")
+            }
+            onClick={(e) => this.toggleView(true)}
           >
             Publish
           </div>
         </div>
-        <Settings
+        <Manage
           visible={!updatorVisible}
-          githubData={githubData}
-          onGithubSet={this.toggleView}
-          settingSwitch={settingSwitch}
+          list={gitDataList}
+          pageList={docPageList}
+          user={currentUser}
+          // onGithubSet={this.toggleView}
+          // settingSwitch={settingSwitch}
         />
-        <Updator
+        {/* <Updator
           onSucceed={this.onSucceed}
           visible={updatorVisible}
-          githubData={githubData}
+          githubData={gitDataList}
           webhookData={webhookData}
-        />
+        /> */}
       </div>
-    )
+    );
   }
 }
 
-ReactDOM.render(<App />, document.getElementById('react-page'))
+ReactDOM.render(<App />, document.getElementById("react-page"));

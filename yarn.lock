@@ -2,6 +2,11 @@
 # yarn lockfile v1
 
 
+"@figma/plugin-typings@^1.42.1":
+  version "1.42.1"
+  resolved "https://registry.yarnpkg.com/@figma/plugin-typings/-/plugin-typings-1.42.1.tgz#b9999c3d162db9b3d384c609b15ed18e49b0540f"
+  integrity sha512-TQy81xtgcNWhu2uSiOZIxzGOC8Y/9rcP04GLp2f5MGg/LOH5BPNIkc8mRYPqInwcgQTnvxDpirr8MpYQPYRwDQ==
+
 "@types/prop-types@*":
   version "15.7.1"
   resolved "https://registry.npm.taobao.org/@types/prop-types/download/@types/prop-types-15.7.1.tgz#f1a11e7babb0c3cad68100be381d1e064c68f1f6"
